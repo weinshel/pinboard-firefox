@@ -160,7 +160,7 @@ var updateSelectedTabExtIcon = function () {
         } else if (pageInfo && pageInfo.isSaving) {
             iconPath = savingIcon;
         }
-        browser.browserAction.setIcon(
+        browser.pageAction.setIcon(
             { path: iconPath, tabId: tab.id });
     });
 };
@@ -357,13 +357,14 @@ browser.tabs.query({ active: true, currentWindow: true }, function (tabs) {
         url: tab.url,
         ready: function (pageInfo) {
             if (pageInfo && pageInfo.isSaved) {
-                browser.browserAction.setIcon(
+                browser.pageAction.setIcon(
                     { path: yesIcon, tabId: tab.id });
             } else {
-                browser.browserAction.setIcon({path: noIcon, tabId: tab.id});
+                browser.pageAction.setIcon({path: noIcon, tabId: tab.id});
             }
         }
     });
+     browser.pageAction.show(tab.id);
 });
 
 browser.tabs.onUpdated.addListener(function (id, changeInfo, tab) {
@@ -374,24 +375,26 @@ browser.tabs.onUpdated.addListener(function (id, changeInfo, tab) {
         var url = changeInfo.url;
         if (!pages.hasOwnProperty(url)) {
             console.log("query tab pin state on updated");
-            browser.browserAction.setIcon({ path: noIcon, tabId: tab.id });
+            browser.pageAction.setIcon({ path: noIcon, tabId: tab.id });
             queryPinState({
                 url: url,
                 ready: function (pageInfo) {
                     if (pageInfo && pageInfo.isSaved) {
-                        browser.browserAction.setIcon(
+                        browser.pageAction.setIcon(
                             { path: yesIcon, tabId: tab.id });
                     } else {
-                        browser.browserAction.setIcon({path: noIcon, tabId: tab.id});
+                        browser.pageAction.setIcon({path: noIcon, tabId: tab.id});
                     }
                 }
             });
+            browser.pageAction.show(tab.id);
         }
     }
     console.log("set tab pin state on opening");
     var url = changeInfo.url || tab.url;
     if (pages[url] && pages[url].isSaved) {
-        browser.browserAction.setIcon({ path: yesIcon, tabId: tab.id });
+        browser.pageAction.setIcon({ path: yesIcon, tabId: tab.id });
+        browser.pageAction.show(tab.id);
     }
 });
 
@@ -408,13 +411,14 @@ browser.tabs.onActivated.addListener(function (activeInfo) {
                 url: url,
                 ready: function (pageInfo) {
                     if (pageInfo && pageInfo.isSaved) {
-                        browser.browserAction.setIcon(
+                        browser.pageAction.setIcon(
                             { path: yesIcon, tabId: tab.id });
                     } else {
-                        browser.browserAction.setIcon({path: noIcon, tabId: tab.id});
+                        browser.pageAction.setIcon({path: noIcon, tabId: tab.id});
                     }
                 }
             });
+            browser.pageAction.show(tab.id);
         }
     });
 });
